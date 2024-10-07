@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .container {
+      width: 80%;
+      margin: auto;
+      overflow: hidden;
+    }
+
+    header {
+      background: #333;
+      color: #fff;
+      padding-top: 30px;
+      min-height: 70px;
+      border-bottom: #ccc 1px solid;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
+    .form-container input[type="text"],
+    .form-container input[type="file"],
+    .form-container input[type="number"],
+    .form-container select,
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .form-container button {
+      background-color: #5cb85c;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #4cae4c;
+    }
+
+    .logout {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .notification {
+      background-color: #dff0d8;
+      border: 1px solid #d0e9c6;
+      color: #3c763d;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .notification.error {
+      background-color: #f2dede;
+      border: 1px solid #ebccd1;
+      color: #a94442;
+    }
+
+    .video-list {
+      margin-top: 20px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .video-item {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      background: #fafafa;
+      position: relative;
+    }
+
+    .video-item p {
+      margin: 5px 0;
+    }
+
+    .video-item video {
+      width: 100%;
+      max-width: 300px;
+      /* Maksimum genişlik */
+      height: auto;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #d9534f;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background: #c9302c;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Admin Panel</h1>
+  </header>
+  <div class="container">
+    <div class="form-container">
+      <% if (successMessage) { %>
+      <div class="notification">
+        <%= successMessage %>
+      </div>
+      <% } %>
+      <% if (errorMessage) { %>
+      <div class="notification error">
+        <%= errorMessage %>
+      </div>
+      <% } %>
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="text" name="desc" placeholder="Description" required>
+        <select name="category" required>
+          <option value="Kategori seçiniz">Kategori seçiniz</option>
+          <option value="Gayrimenkul & İç Mekan">Gayrimenkul & İç Mekan</option>
+          <option value="Yiyecek & Restoran">Yiyecek & Restoran</option>
+          <option value="Otomotiv & Karavan">Otomotiv & Karavan</option>
+          <option value="Endüstriyel & Ticari">Endüstriyel & Ticari</option>
+          <option value="Spor & Sağlık">Spor & Sağlık</option>
+          <option value="Özel Anlar & Etkinlikler">Özel Anlar & Etkinlikler</option>
+          <option value="Drone Çekimleri">Drone Çekimleri</option>
+        </select>
+        <input type="number" name="order" placeholder="Order" required min="1">
+        <input type="file" name="video" accept="video/mp4" required>
+        <button type="submit">Upload</button>
+      </form>
+      <a class="logout" href="/logout">Logout</a>
+    </div>
+
+    <div class="video-list">
+      <h2>Uploaded Videos</h2>
+      <% videos.forEach((video) => { %>
+      <div class="video-item">
+        <p><strong>Order:</strong> <%= video.order %></p>
+        <p><strong>Title:</strong> <%= video.title %></p>
+        <p><strong>Description:</strong> <%= video.desc %></p>
+        <p><strong>Category:</strong> <%= video.category %></p>
+        <video controls>
+          <source src="<%= video.videoURL %>" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <form action="/delete/<%= video.id %>" method="POST">
+          <button type="submit" class="delete-btn">Delete</button>
+        </form>
+      </div>
+      <% }); %>
+    </div>
+  </div>
+</body>
+
+</html>
